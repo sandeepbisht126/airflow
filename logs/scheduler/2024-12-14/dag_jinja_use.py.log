@@ -1,0 +1,84 @@
+[2024-12-14 20:56:17,008] {scheduler_job.py:181} INFO - Started process (PID=11281) to work on /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:56:17,010] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_jinja_use.py for tasks to queue
+[2024-12-14 20:56:17,011] {logging_mixin.py:104} INFO - [2024-12-14 20:56:17,010] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:56:17,050] {logging_mixin.py:104} INFO - [2024-12-14 20:56:17,046] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_jinja_use.py
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
+    loader.exec_module(new_module)
+  File "<frozen importlib._bootstrap_external>", line 678, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/opt/airflow/dags/dag_jinja_use.py", line 11, in <module>
+    param_val = get_param_value(aod="{{ ds }}")
+TypeError: get_param_value() got an unexpected keyword argument 'aod'
+[2024-12-14 20:56:17,053] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:56:17,070] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_jinja_use.py took 0.064 seconds
+[2024-12-14 20:56:47,604] {scheduler_job.py:181} INFO - Started process (PID=11306) to work on /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:56:47,605] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_jinja_use.py for tasks to queue
+[2024-12-14 20:56:47,606] {logging_mixin.py:104} INFO - [2024-12-14 20:56:47,606] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:56:47,651] {logging_mixin.py:104} INFO - [2024-12-14 20:56:47,647] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_jinja_use.py
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
+    loader.exec_module(new_module)
+  File "<frozen importlib._bootstrap_external>", line 678, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/opt/airflow/dags/dag_jinja_use.py", line 11, in <module>
+    param_val = get_param_value(aod="{{ ds }}")
+TypeError: get_param_value() got an unexpected keyword argument 'aod'
+[2024-12-14 20:56:47,654] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:56:47,670] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_jinja_use.py took 0.068 seconds
+[2024-12-14 20:57:18,273] {scheduler_job.py:181} INFO - Started process (PID=11342) to work on /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:57:18,275] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_jinja_use.py for tasks to queue
+[2024-12-14 20:57:18,276] {logging_mixin.py:104} INFO - [2024-12-14 20:57:18,276] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:57:18,332] {logging_mixin.py:104} INFO - [2024-12-14 20:57:18,328] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_jinja_use.py
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
+    loader.exec_module(new_module)
+  File "<frozen importlib._bootstrap_external>", line 678, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/opt/airflow/dags/dag_jinja_use.py", line 11, in <module>
+    param_val = get_param_value(aod="{{ ds }}")
+TypeError: get_param_value() got an unexpected keyword argument 'aod'
+[2024-12-14 20:57:18,339] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:57:18,361] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_jinja_use.py took 0.093 seconds
+[2024-12-14 20:57:49,082] {scheduler_job.py:181} INFO - Started process (PID=11369) to work on /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:57:49,083] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_jinja_use.py for tasks to queue
+[2024-12-14 20:57:49,084] {logging_mixin.py:104} INFO - [2024-12-14 20:57:49,084] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:57:49,129] {logging_mixin.py:104} INFO - [2024-12-14 20:57:49,125] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_jinja_use.py
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
+    loader.exec_module(new_module)
+  File "<frozen importlib._bootstrap_external>", line 678, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/opt/airflow/dags/dag_jinja_use.py", line 11, in <module>
+    param_val = get_param_value(aod="{{ ds }}")
+TypeError: get_param_value() got an unexpected keyword argument 'aod'
+[2024-12-14 20:57:49,133] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:57:49,154] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_jinja_use.py took 0.075 seconds
+[2024-12-14 20:58:19,683] {scheduler_job.py:181} INFO - Started process (PID=11404) to work on /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:58:19,685] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_jinja_use.py for tasks to queue
+[2024-12-14 20:58:19,686] {logging_mixin.py:104} INFO - [2024-12-14 20:58:19,686] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:58:19,732] {logging_mixin.py:104} INFO - [2024-12-14 20:58:19,728] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_jinja_use.py
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
+    loader.exec_module(new_module)
+  File "<frozen importlib._bootstrap_external>", line 678, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/opt/airflow/dags/dag_jinja_use.py", line 11, in <module>
+    param_val = get_param_value(aod="{{ ds }}")
+TypeError: get_param_value() got an unexpected keyword argument 'aod'
+[2024-12-14 20:58:19,736] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:58:19,752] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_jinja_use.py took 0.072 seconds
+[2024-12-14 20:58:50,178] {scheduler_job.py:181} INFO - Started process (PID=11429) to work on /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:58:50,180] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_jinja_use.py for tasks to queue
+[2024-12-14 20:58:50,181] {logging_mixin.py:104} INFO - [2024-12-14 20:58:50,181] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:58:50,226] {logging_mixin.py:104} INFO - [2024-12-14 20:58:50,223] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_jinja_use.py
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
+    loader.exec_module(new_module)
+  File "<frozen importlib._bootstrap_external>", line 678, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/opt/airflow/dags/dag_jinja_use.py", line 11, in <module>
+    param_val = get_param_value(aod="{{ ds }}")
+TypeError: get_param_value() got an unexpected keyword argument 'aod'
+[2024-12-14 20:58:50,230] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_jinja_use.py
+[2024-12-14 20:58:50,246] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_jinja_use.py took 0.070 seconds

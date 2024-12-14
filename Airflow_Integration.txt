@@ -1,0 +1,29 @@
+INFORMATION:
+D:\Spark\spark3\bin\spark-submit --master local[*] --num-executors 1
+ --executor-cores 1 --executor-memory 1g --driver-memory 1g --name free_now_application --verbose --queue default --deploy-mode client spark_job.py
+ 
+/home/airflow/.local/bin/spark-submit --master local[*] --num-executors 1 --executor-cores 1 --executor-memory 1g --driver-memory 1g --name free_now_application --verbose --queue default --deploy-mode client test.py
+
+DOCKERFILE:
+FROM apache/airflow:2.1.2
+COPY requiredPackages.txt .
+RUN pip install -r requiredPackages.txt
+
+
+COMMAND:
+cd /mnt/d/Airflow
+docker-compose build
+docker-compose up
+
+STUDY:
+Airflow cron tab schedule  - done
+udf - done
+Trigger DAG w/ config - ok
+Spark config details 
+
+8GB RAM
+4 cores
+
+num-executors = 3
+executor-memory = 2 
+executor-cores = 1

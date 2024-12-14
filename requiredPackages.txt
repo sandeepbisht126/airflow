@@ -1,0 +1,2 @@
+pip install apache-airflow-providers-apache-spark
+pip install vi
