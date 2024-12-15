@@ -6,10 +6,6 @@ from datetime import datetime, timedelta
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 
-from script.utils import get_param_value
-
-param_val = get_param_value(aod="{{ ds }}")
-
 dag = DAG(
     dag_id="dag_jinja_use",
     description="usage of airflow macro",
@@ -45,13 +41,6 @@ workflow2 = BashOperator(
     dag=dag
 )
 
-workflow3 = PythonOperator(
-    task_id='print_python',
-    python_callable=print_log,
-    op_args=[" {{ ds }}", param_val.get("aod")],
-    dag=dag
-)
-
 workflow4 = PythonOperator(
     task_id='script_python',
     python_callable=run_pyhon_script,
@@ -66,4 +55,4 @@ workflow5 = BashOperator(
     dag=dag
 )
 
-workflow1 >> workflow2 >> workflow3 >> workflow4 >> workflow5
+workflow1 >> workflow2 >> workflow4 >> workflow5

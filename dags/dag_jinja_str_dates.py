@@ -6,7 +6,7 @@ from airflow.utils.dates import days_ago
 
 from script.utils import get_param_value, convert_str_to_datetime, daterange, iterate_str_dates
 
-pipeline_name = "dag_jinja_simple"
+pipeline_name = "dag_jinja_str_dates"
 historical_load_params = Variable.get("historical_load_params")
 params = get_param_value(pipeline_name=pipeline_name,
                          historical_load_params=historical_load_params,
@@ -16,9 +16,14 @@ params = get_param_value(pipeline_name=pipeline_name,
                          )
 
 if params.get("load_type") == 'daily':
-    # params["aod"] = [f"{{{{ macros.ds_add(ds, -{i}) }}}}" for i in range(5)]       # for multi-day processing for Daily load
-    params["aod"] = ["{{ macros.ds_add(ds, -7) }}"]                                  # for single day processing for Daily load
-
+    dates_to_process = [f"{{{{ macros.ds_add(ds, -{i}) }}}}" for i in range(5)]  # for multi-day processing for Daily load, like Beacon PDM
+    # dates_to_process = ["{{ macros.ds_add(ds, -7) }}"]                         # for single day processing for Daily load, like Commercial common
+elif params.get("load_type") == 'historical':
+    dates_to_process = [aod.strftime("%Y-%m-%d")
+                        for aod, _ in daterange(convert_str_to_datetime(params.get("aod_start")),
+                                                convert_str_to_datetime(params.get("aod_end")))]
+else:
+    raise ValueError("Invalid load_type, should be daily or historical")
 
 dag = DAG(
     dag_id="dag_jinja_str_dates",
@@ -36,7 +41,7 @@ def print_log(aod_start=None, aod_end=None):
 
 
 tasks_list = []
-for i, aod in enumerate(params.get("aod")):
+for i, aod in enumerate(dates_to_process):
     tsk = PythonOperator(
         task_id=f'print_python_{i}',
         python_callable=print_log,
@@ -44,6 +49,5 @@ for i, aod in enumerate(params.get("aod")):
         dag=dag
     )
     tasks_list.append(tsk)
-
 
 tasks_list
