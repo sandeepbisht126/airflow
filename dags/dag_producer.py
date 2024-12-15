@@ -18,6 +18,7 @@ dag = DAG(
 bash_script_path = os.path.join(os.environ['AIRFLOW_HOME'], 'dags', 'script', 'airflow_macro.sh ')
 py_script_path = os.path.join(os.environ['AIRFLOW_HOME'], 'dags', 'script', 'airflow_macro.py')
 
+
 def print_log(dt):
     print(f'from python operator - yesterday day was - {dt} and type: {type(dt)}')
     print(f'script path is - {bash_script_path}')
@@ -51,6 +52,5 @@ workflow4 = PythonOperator(
     dag=dag,
     outlets=[Dataset("script_python_done")]
 )
-
 
 workflow1 >> workflow3 >> workflow4

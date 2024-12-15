@@ -1,5 +1,6 @@
-FROM apache/airflow:2.1.2
-RUN pip install apache-airflow-providers-apache-spark
+FROM apache/airflow:2.7.3
+# RUN pip install apache-airflow-providers-apache-spark
+RUN pip install "apache-airflow[celery,postgres,redis]==2.7.3"
 
 USER root
 # Install OpenJDK-11
