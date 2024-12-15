@@ -1,17 +1,18 @@
 from datetime import datetime, timedelta
 
 
-def get_param_value(pipeline_name=None, historical_load_params=None, cc_list=None, aod_start_range=1, aod_end_range=1):
-    aod_start = (datetime.now() - timedelta(aod_start_range)).strftime("%Y-%m-%d")
-    aod_end = (datetime.now() - timedelta(aod_end_range)).strftime("%Y-%m-%d")
-    aod = datetime.now().strftime("%Y-%m-%d")
+def get_param_value(pipeline_name, historical_load_params, cc_list, aod_start_range=1, aod_end_range=1, aod=None):
+    _aod = convert_str_to_datetime(aod) if aod else datetime.now()
+    aod_start = (_aod - timedelta(aod_start_range)).strftime("%Y-%m-%d")
+    aod_end = (_aod - timedelta(aod_end_range)).strftime("%Y-%m-%d")
+    aod = _aod.strftime("%Y-%m-%d")
     cc_list = cc_list
     param_dict = {
         "aod_start": aod_start,
         "aod_end": aod_end,
-        "aod": aod,
         "cc_list": cc_list,
-        "hist_flag": False
+        "load_type": "daily",
+        "aod": aod
     }
 
     historical_load = eval(historical_load_params) if historical_load_params else None
@@ -28,7 +29,7 @@ def get_param_value(pipeline_name=None, historical_load_params=None, cc_list=Non
                 param_dict["aod_end"] = hist_aod_end
                 param_dict["aod"] = hist_aod
                 param_dict["cc_list"] = hist_cc_list
-                param_dict["hist_flag"] = True
+                param_dict["load_type"] = 'historical'
 
     return param_dict
 

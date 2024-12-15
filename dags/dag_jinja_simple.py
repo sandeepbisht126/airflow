@@ -8,22 +8,24 @@ from airflow.utils.dates import days_ago
 
 from script.utils import get_param_value, convert_str_to_datetime, daterange
 
+aod = "{{ macros.ds_add(ds, -7) }}"
 pipeline_name = "dag_jinja_simple"
 historical_load_params = Variable.get("historical_load_params")
 params = get_param_value(pipeline_name=pipeline_name,
                          historical_load_params=historical_load_params,
                          cc_list=eval(Variable.get("cc_list")),
                          aod_start_range=7,
-                         aod_end_range=7
+                         aod_end_range=7,
+                         aod="2012-12-12",
                          )
 
-if not params.get("hist_flag"):  # for daily load
+if params.get("load_type") == 'daily':  # for daily load, single day processing on aod
     params = {
         "aod_start": params.get("aod_start"),
         "aod_end": params.get("aod_end"),
-        "aod": "{{ macros.ds_add(ds, -7) }}",
+        "aod": "{{ macros.ds_add(ds, -20) }}",
         "cc_list": eval(Variable.get("cc_list")),
-        "hist_flag": params.get("hist_flag")
+        "load_type": params.get("load_type")
     }
 
 dag = DAG(
@@ -47,8 +49,21 @@ workflow3 = PythonOperator(
     op_args=[(aod.strftime('%Y-%m-%d'), 'hist')
              for aod, _ in daterange(convert_str_to_datetime(params.get("aod_start")),
                                      convert_str_to_datetime(params.get("aod_end")))
-             if params.get("hist_flag")] or [params.get("aod"), 'daily'],
+             if params.get("load_type") == 'historical'] or [params.get("aod"), 'daily'],
     dag=dag
 )
 
-workflow3
+workflow4 = PythonOperator(
+    task_id='get_param_value',
+    python_callable=get_param_value,
+    op_args=[pipeline_name,
+             historical_load_params,
+             eval(Variable.get("cc_list")),
+             2,
+             3,
+             "{{ macros.ds_add(ds, -7) }}"],
+    dag=dag
+)
+
+workflow3 >> workflow4
+
