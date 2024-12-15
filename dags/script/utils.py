@@ -44,3 +44,37 @@ def daterange(start_date, end_date, step=timedelta(days=1)):
             end_date_temp = end_date
         yield start_date, end_date_temp
         start_date += step
+
+
+def iterate_str_dates(start_date, end_date):
+    """
+    Generate string dates between start_date and end_date (inclusive).
+    :param start_date: str, in YYYY-MM-DD format
+    :param end_date: str, in YYYY-MM-DD format
+    :return: generator yielding date strings
+    """
+
+    def increment_str_date(date_str):
+        year, month, day = map(int, date_str.split("-"))
+
+        # Increment day
+        day += 1
+
+        # Handle month-end
+        if (day > 31 or
+                (month == 2 and day > 28 and (year % 4 != 0 or (year % 100 == 0 and year % 400 != 0))) or
+                (month in [4, 6, 9, 11] and day > 30)):
+            day = 1
+            month += 1
+
+        # Handle year-end
+        if month > 12:
+            month = 1
+            year += 1
+
+        return f"{year:04d}-{month:02d}-{day:02d}"
+
+    current_date = start_date
+    while current_date <= end_date:
+        yield current_date
+        current_date = increment_str_date(current_date)

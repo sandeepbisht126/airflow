@@ -1,7 +1,7 @@
-[2024-12-14 20:56:15,994] {scheduler_job.py:181} INFO - Started process (PID=11279) to work on /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:56:15,995] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_producer.py for tasks to queue
-[2024-12-14 20:56:15,996] {logging_mixin.py:104} INFO - [2024-12-14 20:56:15,996] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:56:16,021] {logging_mixin.py:104} INFO - [2024-12-14 20:56:16,016] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_producer.py
+[2024-12-14 21:01:21,736] {scheduler_job.py:181} INFO - Started process (PID=11588) to work on /opt/airflow/dags/dag_producer.py
+[2024-12-14 21:01:21,737] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_producer.py for tasks to queue
+[2024-12-14 21:01:21,738] {logging_mixin.py:104} INFO - [2024-12-14 21:01:21,738] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_producer.py
+[2024-12-14 21:01:21,758] {logging_mixin.py:104} INFO - [2024-12-14 21:01:21,754] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_producer.py
 Traceback (most recent call last):
   File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
     loader.exec_module(new_module)
@@ -10,75 +10,5 @@ Traceback (most recent call last):
   File "/opt/airflow/dags/dag_producer.py", line 5, in <module>
     from airflow.datasets import Dataset
 ModuleNotFoundError: No module named 'airflow.datasets'
-[2024-12-14 20:56:16,027] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:56:16,047] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_producer.py took 0.056 seconds
-[2024-12-14 20:56:46,570] {scheduler_job.py:181} INFO - Started process (PID=11305) to work on /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:56:46,572] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_producer.py for tasks to queue
-[2024-12-14 20:56:46,572] {logging_mixin.py:104} INFO - [2024-12-14 20:56:46,572] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:56:46,596] {logging_mixin.py:104} INFO - [2024-12-14 20:56:46,591] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_producer.py
-Traceback (most recent call last):
-  File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
-    loader.exec_module(new_module)
-  File "<frozen importlib._bootstrap_external>", line 678, in exec_module
-  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
-  File "/opt/airflow/dags/dag_producer.py", line 5, in <module>
-    from airflow.datasets import Dataset
-ModuleNotFoundError: No module named 'airflow.datasets'
-[2024-12-14 20:56:46,601] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:56:46,619] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_producer.py took 0.052 seconds
-[2024-12-14 20:57:17,239] {scheduler_job.py:181} INFO - Started process (PID=11341) to work on /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:57:17,240] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_producer.py for tasks to queue
-[2024-12-14 20:57:17,241] {logging_mixin.py:104} INFO - [2024-12-14 20:57:17,241] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:57:17,260] {logging_mixin.py:104} INFO - [2024-12-14 20:57:17,256] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_producer.py
-Traceback (most recent call last):
-  File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
-    loader.exec_module(new_module)
-  File "<frozen importlib._bootstrap_external>", line 678, in exec_module
-  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
-  File "/opt/airflow/dags/dag_producer.py", line 5, in <module>
-    from airflow.datasets import Dataset
-ModuleNotFoundError: No module named 'airflow.datasets'
-[2024-12-14 20:57:17,263] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:57:17,281] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_producer.py took 0.046 seconds
-[2024-12-14 20:57:47,994] {scheduler_job.py:181} INFO - Started process (PID=11368) to work on /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:57:47,996] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_producer.py for tasks to queue
-[2024-12-14 20:57:47,997] {logging_mixin.py:104} INFO - [2024-12-14 20:57:47,997] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:57:48,030] {logging_mixin.py:104} INFO - [2024-12-14 20:57:48,025] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_producer.py
-Traceback (most recent call last):
-  File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
-    loader.exec_module(new_module)
-  File "<frozen importlib._bootstrap_external>", line 678, in exec_module
-  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
-  File "/opt/airflow/dags/dag_producer.py", line 5, in <module>
-    from airflow.datasets import Dataset
-ModuleNotFoundError: No module named 'airflow.datasets'
-[2024-12-14 20:57:48,039] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:57:48,073] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_producer.py took 0.082 seconds
-[2024-12-14 20:58:18,612] {scheduler_job.py:181} INFO - Started process (PID=11403) to work on /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:58:18,614] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_producer.py for tasks to queue
-[2024-12-14 20:58:18,615] {logging_mixin.py:104} INFO - [2024-12-14 20:58:18,615] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:58:18,634] {logging_mixin.py:104} INFO - [2024-12-14 20:58:18,631] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_producer.py
-Traceback (most recent call last):
-  File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
-    loader.exec_module(new_module)
-  File "<frozen importlib._bootstrap_external>", line 678, in exec_module
-  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
-  File "/opt/airflow/dags/dag_producer.py", line 5, in <module>
-    from airflow.datasets import Dataset
-ModuleNotFoundError: No module named 'airflow.datasets'
-[2024-12-14 20:58:18,638] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:58:18,653] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_producer.py took 0.043 seconds
-[2024-12-14 20:58:49,159] {scheduler_job.py:181} INFO - Started process (PID=11428) to work on /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:58:49,161] {scheduler_job.py:632} INFO - Processing file /opt/airflow/dags/dag_producer.py for tasks to queue
-[2024-12-14 20:58:49,163] {logging_mixin.py:104} INFO - [2024-12-14 20:58:49,163] {dagbag.py:496} INFO - Filling up the DagBag from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:58:49,200] {logging_mixin.py:104} INFO - [2024-12-14 20:58:49,192] {dagbag.py:329} ERROR - Failed to import: /opt/airflow/dags/dag_producer.py
-Traceback (most recent call last):
-  File "/home/airflow/.local/lib/python3.6/site-packages/airflow/models/dagbag.py", line 326, in _load_modules_from_file
-    loader.exec_module(new_module)
-  File "<frozen importlib._bootstrap_external>", line 678, in exec_module
-  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
-  File "/opt/airflow/dags/dag_producer.py", line 5, in <module>
-    from airflow.datasets import Dataset
-ModuleNotFoundError: No module named 'airflow.datasets'
-[2024-12-14 20:58:49,209] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_producer.py
-[2024-12-14 20:58:49,245] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_producer.py took 0.090 seconds
+[2024-12-14 21:01:21,764] {scheduler_job.py:644} WARNING - No viable dags retrieved from /opt/airflow/dags/dag_producer.py
+[2024-12-14 21:01:21,780] {scheduler_job.py:189} INFO - Processing /opt/airflow/dags/dag_producer.py took 0.047 seconds
