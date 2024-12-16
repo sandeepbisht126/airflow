@@ -1,5 +1,6 @@
 import os
 import subprocess
+from time import sleep
 
 from airflow import DAG
 from airflow.datasets import Dataset
@@ -11,7 +12,7 @@ dag = DAG(
     dag_id="dag_producer",
     description="usage of airflow outlet/ inlet",
     max_active_runs=1,
-    schedule_interval="@once",
+    schedule_interval="*/2 * * * *",
     start_date=datetime.now() - timedelta(days=1)
 )
 
@@ -22,6 +23,7 @@ py_script_path = os.path.join(os.environ['AIRFLOW_HOME'], 'dags', 'script', 'air
 def print_log(dt):
     print(f'from python operator - yesterday day was - {dt} and type: {type(dt)}')
     print(f'script path is - {bash_script_path}')
+    sleep(10)
 
 
 def run_pyhon_script(dt):
