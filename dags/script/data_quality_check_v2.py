@@ -208,7 +208,7 @@ class DataQualityChecks:
         else:
             print(f"Non-critical issue: {str(exception)}")
 
-
+'''
 # Example usage
 DB_CONFIG = {
     "host": "localhost",
@@ -240,3 +240,5 @@ if __name__ == "__main__":
     for params in params_list:
         dq = DataQualityChecks(DB_CONFIG, params)
         dq.run_checks()
+
+'''
