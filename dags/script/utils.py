@@ -1,4 +1,10 @@
 from datetime import datetime, timedelta
+from enum import Enum
+
+
+class CheckType(Enum):
+    ROW_COUNT = "RcountCheck"
+    DUPLICATE = "DuplicateCheck"
 
 
 def get_param_value(pipeline_name, historical_load_params, cc_list, aod_start_range=1, aod_end_range=1, aod=None):
