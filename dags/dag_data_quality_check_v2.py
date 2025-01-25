@@ -47,7 +47,7 @@ with DAG(
                     "metric_name": "DuplicateCheck",
                     "table_name": "session_tgt",
                     "key_by_val": {"inserted_dt": {"gte": "2025-01-01", "lt": "2025-02-01"}},
-                    "key_cols": "data",
+                    "key_cols": ["data"],
                     "threshold": {"upper": 0},
                     "criticality": True,
                 }

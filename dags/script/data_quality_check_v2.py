@@ -64,8 +64,11 @@ class DataQualityChecks:
 
     @key_cols.setter
     def key_cols(self, value):
-        # if not isinstance(value, list):
-        #     raise ValueError("key_cols must be a list")
+        if self._metric_name == "RCountCheck":
+            self._key_cols = []
+            return
+        if not isinstance(value, list):
+            raise ValueError("key_cols must be a list")
         if not value and self._metric_name == "DuplicateCheck":
             raise ValueError("key_cols is must for DuplicateCheck")
 
@@ -140,6 +143,8 @@ class DataQualityChecks:
 
     def perform_row_count_check(self):
         """Perform a row count check and validate against thresholds."""
+
+        print(f"DQ check running for {self.metric_name}...")
         if not self.table_name:
             raise ValueError("The 'tableName' parameter is mandatory for RowCountCheck.")
 
@@ -158,21 +163,24 @@ class DataQualityChecks:
 
     def perform_duplicate_check(self):
         """Perform a duplicate check and validate against thresholds."""
+
+        print(f"DQ check running for {self.metric_name}...")
         if not self.table_name or not self.key_cols:
             raise ValueError("The 'tableName' and 'key_cols' parameters are mandatory for DuplicateCheck.")
 
+        key_cols_str = ",".join(self.key_cols)
         where_clause, params = self.construct_where_clause()
         query = sql.SQL("""
             SELECT COUNT(1)
             FROM (
-                SELECT {key_col}, COUNT(1) as duplicate_count
+                SELECT {key_cols_str}, COUNT(1) as duplicate_count
                 FROM {table}
                 WHERE {where_clause}
-                GROUP BY {key_col}
+                GROUP BY {key_cols_str}
                 HAVING COUNT(1) > 1
             ) as duplicate_records
         """).format(
-            key_col=sql.Identifier(self.key_cols),
+            key_cols_str=sql.Identifier(key_cols_str),
             table=sql.Identifier(self.table_name),
             where_clause=sql.SQL(where_clause)
         )
@@ -184,7 +192,7 @@ class DataQualityChecks:
     def run_checks(self):
         """Run the appropriate check based on the metric_name."""
         try:
-            if self.metric_name == "RcountCheck":
+            if self.metric_name == "RCountCheck":
                 self.perform_row_count_check()
             elif self.metric_name == "DuplicateCheck":
                 self.perform_duplicate_check()
@@ -200,7 +208,7 @@ class DataQualityChecks:
         else:
             print(f"Non-critical issue: {str(exception)}")
 
-'''
+
 # Example usage
 DB_CONFIG = {
     "host": "localhost",
@@ -212,7 +220,7 @@ DB_CONFIG = {
 
 params_list = [
     {
-        "metric_name": "RcountCheck",
+        "metric_name": "RCountCheck",
         "table_name": "session_tgt",
         "key_by_val": {"inserted_dt": {"gte": "2025-01-01", "lt": "2025-02-01"}, "data": "data1"},
         "threshold": {"lower": 1},
@@ -222,7 +230,7 @@ params_list = [
         "metric_name": "DuplicateCheck",
         "table_name": "session_tgt",
         "key_by_val": {"inserted_dt": {"gte": "2025-01-01", "lt": "2025-02-01"}},
-        "key_cols": "data",
+        "key_cols": ["data"],
         "threshold": {"upper": 0},
         "criticality": True,
     }
@@ -232,4 +240,3 @@ if __name__ == "__main__":
     for params in params_list:
         dq = DataQualityChecks(DB_CONFIG, params)
         dq.run_checks()
-'''
