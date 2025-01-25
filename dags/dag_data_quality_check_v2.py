@@ -37,7 +37,7 @@ with DAG(
         params={
             "dq_checks": [
                 {
-                    "metric_name": "RcountCheck",
+                    "metric_name": "RCountCheck",
                     "table_name": "session_tgt",
                     "key_by_val": {"inserted_dt": {"gte": "2025-01-01", "lt": "2025-02-01"}, "data": "data1"},
                     "threshold": {"lower": 1},
