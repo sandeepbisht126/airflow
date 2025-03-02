@@ -34,7 +34,7 @@ all_dag_params = Variable.get("dag_parameters", default_var="{}", deserialize_js
 dag_params = all_dag_params.get("dag_clear_dag_instance_operator", {})
 dags_to_run = dag_params.get("dags_to_run", [])
 execution_dates_list = dag_params.get("execution_dates_list", [])
-dependency = dag_params.get("dependency", "sequential")
+dependency = dag_params.get("dependency", "parallel")
 
 dag = DAG(
     dag_id='dag_clear_dag_instance_operator_v2',
@@ -69,10 +69,10 @@ for dag_nm in dags_to_run:
             dag=dag,
         )
 
-        if dependency == "sequential":
+        if dependency == "parallel":
+            clear_task >> trigger_dag_run
+        else:
             if previous_task:
                 previous_task >> clear_task
             clear_task >> trigger_dag_run
             previous_task = trigger_dag_run
-        else:
-            clear_task >> trigger_dag_run
