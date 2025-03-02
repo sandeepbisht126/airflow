@@ -2,7 +2,6 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.models import DagRun
 from airflow.api.common.experimental.trigger_dag import trigger_dag
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import parse_execution_date
 from datetime import datetime
 from airflow.utils.session import provide_session
