@@ -2,6 +2,7 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.models import DagRun
 from airflow.api.common.experimental.trigger_dag import trigger_dag
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.utils.dates import parse_execution_date
 from datetime import datetime
 from airflow.utils.session import provide_session
@@ -58,7 +59,7 @@ start = DummyOperator(task_id="start")
 tasks = []
 for dag_nm in dags_to_run:
     for exec_dt in execution_dates_list:
-        task_id = f"{dag_nm}_clear_and_trigger_{exec_dt}"
+        task_id = f"{dag_nm}_{exec_dt}"
         trigger_dag_run = PythonOperator(
             task_id=re.sub(r"[^a-zA-Z0-9_-]", "-", task_id),
             python_callable=clear_and_trigger_dag_run,
