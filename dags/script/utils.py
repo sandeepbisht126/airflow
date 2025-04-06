@@ -1,5 +1,11 @@
 from datetime import datetime, timedelta
 from enum import Enum
+import sys
+from airflow.models import DagBag, DagRun, TaskInstance
+from airflow.settings import Session
+from airflow.utils.state import State
+from airflow.utils import timezone
+from sqlalchemy.orm import sessionmaker
 
 
 class CheckType(Enum):
@@ -85,3 +91,39 @@ def iterate_str_dates(start_date, end_date):
     while current_date <= end_date:
         yield current_date
         current_date = increment_str_date(current_date)
+
+
+def run_tasks(dag_id, task_id):
+    CLEAR_FROM = timezone.datetime(2025, 2, 1)
+    CLEAR_TO = timezone.datetime(2025, 2, 5)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=Session.bind)
+    session = SessionLocal()
+    dagbag = DagBag()
+    dag = dagbag.get_dag(dag_id)
+
+    if not dag:
+        raise Exception(f"DAG {dag_id} not found")
+
+    task = dag.get_task(task_id)
+
+    dag_runs = (
+        session.query(DagRun)
+        .filter(DagRun.dag_id == dag_id)
+        .filter(DagRun.execution_date >= CLEAR_FROM)
+        .filter(DagRun.execution_date < CLEAR_TO)
+        .order_by(DagRun.execution_date)
+        .all()
+    )
+
+    for run in dag_runs:
+        ti = TaskInstance(task=task, execution_date=run.execution_date)
+        ti.refresh_from_db(session=session)
+        if ti.state not in [State.RUNNING, State.QUEUED, State.SUCCESS]:
+            print(f"▶️ Running {task_id} for {run.execution_date}")
+            # ti.run(ignore_all_deps=True, ignore_ti_state=True)
+            task.execute(context={'task_instance': ti, 'execution_date': run.execution_date})
+        else:
+            print(f"⏩ Skipping {run.execution_date}, state: {ti.state}")
+
+    session.close()
+    print("✅ Task trigger completed.")

@@ -3,16 +3,17 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 from airflow.decorators import task_group
+from airflow.operators.dummy import DummyOperator
 
 
 def parallel_load(cc):
-    @task_group(group_id=f"insert_for_{cc}", ui_color="#80D8FF")
+    @task_group(group_id=f"tg_insert_for_{cc}", ui_color="#80D8FF")
     def load_tasks():
         tasks = []
         parallel_thread = 6
         for id in range(parallel_thread):
             insert_parallel = PostgresOperator(
-                task_id=f'insert_chunk_{id}',
+                task_id=f'insert_for_{cc}_chunk_{id}',
                 postgres_conn_id='postgres_conn_id',  # Connection ID from Airflow > Admin > Connections
                 sql=f"""
                     INSERT INTO huge_table_parallel
@@ -22,8 +23,27 @@ def parallel_load(cc):
                 """,
             )
             tasks.append(insert_parallel)
-        return tasks
-    return load_tasks()
+
+        # Completion marker outside the TaskGroup
+        all_chunk_done = DummyOperator(task_id=f"tg_insert_for_{cc}_completed")
+        for chunk_task in tasks:
+            start >> chunk_task
+            chunk_task >> all_chunk_done
+
+    load_tasks()
+
+
+def sequencial_load(cc):
+    insert_parallel_tb = PostgresOperator(
+        task_id=f'insert_for_{cc}',
+        postgres_conn_id='postgres_conn_id',
+        sql=f"""
+                INSERT INTO huge_table_parallel
+                SELECT * FROM huge_table
+                WHERE country = '{cc}'
+            """,
+    )
+    start >> insert_parallel_tb
 
 
 with DAG(
@@ -40,17 +60,9 @@ with DAG(
     )
 
     all_tasks = []
-    for cc in ['IN', 'SG']:
-        insert_parallelTb = parallel_load(cc) if cc == 'IN' else PostgresOperator(
-            task_id=f'insert_for_{cc}',
-            postgres_conn_id='postgres_conn_id',
-            sql=f"""
-                    INSERT INTO huge_table_parallel
-                    SELECT * from huge_table
-                    where country = '{cc}'
-                    """,
-        )
-
-    start >> insert_parallelTb
-
-
+    for cc in ['IN', 'SG', 'UK']:
+    # for cc in ['UK']:
+        if cc == 'IN':
+            parallel_load(cc)
+        else:
+            sequencial_load(cc)

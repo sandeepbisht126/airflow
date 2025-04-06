@@ -16,7 +16,8 @@ start_date = datetime.strptime(start_date_str, "%Y-%m-%d") if start_date_str els
 def print_values():
     print(f"dag_params = {dag_params}")
     print(f"dag_params.concurrency = {concurrency}")
-    print(f"dag_params.countries = {countries}")
+    for cc in countries:
+        print(f"dag_params.countries = {cc}, {type(countries)}")
 
 
 with DAG(

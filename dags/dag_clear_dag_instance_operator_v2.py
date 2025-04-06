@@ -6,7 +6,7 @@ from airflow.models import DagRun
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import parse_execution_date
 from airflow.utils.session import provide_session
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 @provide_session
@@ -30,11 +30,25 @@ def clear_dag_run(dag_id, execution_date_str, session=None):
 
 
 # Fetch parameters from Airflow Variable
-all_dag_params = Variable.get("dag_parameters", default_var="{}", deserialize_json=True)
-dag_params = all_dag_params.get("dag_clear_dag_instance_operator", {})
-dags_to_run = dag_params.get("dags_to_run", [])
-execution_dates_list = dag_params.get("execution_dates_list", [])
-dependency = dag_params.get("dependency", "parallel")
+all_dag_params = Variable.get("dag_backfill_params", default_var="{}", deserialize_json=True)
+print(f"type of all_dag_params is: {type(all_dag_params)}")
+# dag_params = all_dag_params.get("dag_clear_dag_instance_operator", {})
+# all_dag_params = eval(Variable.get("dag_backfill_params", default_var="{}", deserialize_json=True))
+dags_to_run = all_dag_params.get("dags_to_run", [])
+execution_dates_list = all_dag_params.get("execution_dates_list", [])
+dependency = all_dag_params.get("dependency", "parallel")
+execution_date_start = all_dag_params.get("execution_date_start")
+execution_date_end = all_dag_params.get("execution_date_end")
+flag = all_dag_params.get("flag")
+
+# Generate list of execution dates
+if execution_date_start and execution_date_end:
+    start_date = parse_execution_date(execution_date_start)
+    end_date = parse_execution_date(execution_date_end)
+    current_date = start_date
+    while current_date <= end_date:
+        execution_dates_list.append(current_date.strftime('%Y-%m-%d'))
+        current_date += timedelta(days=1)
 
 dag = DAG(
     dag_id='dag_clear_dag_instance_operator_v2',

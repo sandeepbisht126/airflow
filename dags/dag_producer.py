@@ -8,11 +8,12 @@ from datetime import datetime, timedelta
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 
+
 dag = DAG(
     dag_id="dag_producer",
     description="usage of airflow outlet/ inlet",
     max_active_runs=1,
-    schedule_interval="*/2 * * * *",
+    schedule_interval="00 08 * * *",
     start_date=datetime.now() - timedelta(days=1)
 )
 
