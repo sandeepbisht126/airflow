@@ -19,7 +19,7 @@ def parallel_load(cc):
                     INSERT INTO huge_table_parallel
                     SELECT * from huge_table
                     WHERE country = '{cc}'
-                    AND mod(id, {parallel_thread}) = {id};
+                    AND mod(id, {parallel_thread}) = {id} limit 1000
                 """,
             )
             tasks.append(insert_parallel)
@@ -40,7 +40,7 @@ def sequencial_load(cc):
         sql=f"""
                 INSERT INTO huge_table_parallel
                 SELECT * FROM huge_table
-                WHERE country = '{cc}'
+                WHERE country = '{cc}' limit 100
             """,
     )
     start >> insert_parallel_tb
@@ -50,7 +50,7 @@ with DAG(
     dag_id='dag_postgres_parallel_load',
     description='A sample DAG to test parallel load in postgresql',
     start_date=datetime(2025, 1, 1),
-    schedule_interval=None,
+    schedule_interval='00 16 * * *',
     catchup=False,
 ) as dag:
 
@@ -60,8 +60,7 @@ with DAG(
     )
 
     all_tasks = []
-    for cc in ['IN', 'SG', 'UK']:
-    # for cc in ['UK']:
+    for cc in ['IN', 'ID', 'HK']:
         if cc == 'IN':
             parallel_load(cc)
         else:
