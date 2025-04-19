@@ -60,7 +60,7 @@ with DAG(
     )
 
     all_tasks = []
-    for cc in ['IN', 'ID', 'HK', 'PK', 'PH']:
+    for cc in ['IN', 'ID', 'HK', 'PK', 'PH', 'MY']:
         if cc == 'IN':
             parallel_load(cc)
         else:

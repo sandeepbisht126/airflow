@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 from airflow.models import DagRun, DagBag
 from airflow.utils.state import State
 
-# Fetch parameters from Airflow Variable
 all_dag_params = Variable.get("dag_backfill_params", default_var="{}", deserialize_json=True)
 print(f"type of all_dag_params is: {type(all_dag_params)}")
 dags_to_run = all_dag_params.get("dags_to_run", [])
@@ -18,7 +17,7 @@ dependency = all_dag_params.get("dependency", "parallel")
 execution_date_start = all_dag_params.get("execution_date_start")
 execution_date_end = all_dag_params.get("execution_date_end")
 only_delete_dagrun = all_dag_params.get("only_delete_dagrun")
-set_dag_state = all_dag_params.get("set_dag_state", False)
+only_run_new_tasks = all_dag_params.get("only_run_new_tasks", False)
 
 
 @provide_session
@@ -42,7 +41,7 @@ def clear_dag_run(dag_id, execution_date_str, session=None):
 
 
 @provide_session
-def set_dag_state_def(dag_id, execution_date_str, session=None):
+def set_dag_state(dag_id, execution_date_str, session=None):
     execution_date = parse_execution_date(execution_date_str)
     dag_bag = DagBag()
 
@@ -119,10 +118,10 @@ for dag_nm in dags_to_run:
         task_id = f"{dag_nm}_{exec_dt}"
         sanitized_task_id = re.sub(r"[^a-zA-Z0-9_-]", "-", task_id)
 
-        if set_dag_state:
+        if only_run_new_tasks:
             set_state = PythonOperator(
-                task_id=f"set_state_{sanitized_task_id}",
-                python_callable=set_dag_state_def,
+                task_id=f"run_new_tasks_{sanitized_task_id}",
+                python_callable=set_dag_state,
                 op_kwargs={
                     'dag_id': dag_nm,
                     'execution_date_str': exec_dt,
