@@ -52,6 +52,7 @@ with DAG(
     start_date=datetime(2025, 1, 1),
     schedule_interval='00 16 * * *',
     catchup=False,
+    max_active_runs=1
 ) as dag:
 
     start = PythonOperator(
@@ -60,7 +61,8 @@ with DAG(
     )
 
     all_tasks = []
-    for cc in ['IN', 'ID', 'HK', 'PK', 'PH', 'MY']:
+    for cc in ['IN', 'ID', 'HK', 'PK', 'PH', 'MY', 'DE2']:
+    # for cc in ['DE']:
         if cc == 'IN':
             parallel_load(cc)
         else:

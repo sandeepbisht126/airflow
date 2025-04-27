@@ -10,7 +10,6 @@ from airflow.models import DagRun, DagBag
 from airflow.utils.state import State
 
 all_dag_params = Variable.get("dag_backfill_params", default_var="{}", deserialize_json=True)
-print(f"type of all_dag_params is: {type(all_dag_params)}")
 dags_to_run = all_dag_params.get("dags_to_run", [])
 execution_dates_list = all_dag_params.get("execution_dates_list", [])
 dependency = all_dag_params.get("dependency", "parallel")
@@ -50,18 +49,29 @@ def set_dag_state(dag_id, execution_date_str, session=None):
 
     dag_runs = session.query(DagRun).filter(
         DagRun.dag_id == dag_id,
-        DagRun.execution_date >= execution_date,
-        DagRun.execution_date <= execution_date,
-    ).all()
+        DagRun.execution_date == execution_date
+    ).order_by(DagRun.execution_date.asc()).all()
+
+    active_dagrun_count = session.query(DagRun).filter(
+        DagRun.dag_id == dag_id,
+        DagRun.state == State.RUNNING
+    ).count()
 
     if not dag_runs:
         print(f"No DAG runs found for DAG '{dag_id}' in range.")
         return
 
     for dr in dag_runs:
-        if dr.state != State.RUNNING:
-            print(f"Setting DagRun {dag_id} @ {dr.execution_date} to RUNNING")
+        # Only touch completed DagRuns
+        if dr.state in [State.SUCCESS, State.FAILED]:
+            if active_dagrun_count >= 1:
+                dr.state = State.QUEUED  # or custom
+                session.merge(dr)
+                continue
+
+            # Set one DagRun at a time
             dr.state = State.RUNNING
+            active_dagrun_count += 1
 
     session.commit()
     print("All new tasks queued.")
@@ -110,11 +120,18 @@ if execution_date_start and execution_date_end:
     end_date = parse_execution_date(execution_date_end)
     current_date = start_date
     while current_date <= end_date:
-        execution_dates_list.append(current_date.strftime('%Y-%m-%dT%H:%M:%S'))
+        # execution_dates_list.append(current_date.strftime('%Y-%m-%dT%H:%M:%S'))
+        execution_dates_list.append(current_date)
         current_date += timedelta(days=1)
 
-for dag_nm in dags_to_run:
-    for exec_dt in sorted(set(execution_dates_list)):
+
+# execution_dates_parsed = [parse_execution_date(dt) for dt in set(execution_dates_list)]
+# execution_dates_sorted = sorted(execution_dates_parsed)
+
+previous_task = []
+for exec_dt_obj in sorted(set(execution_dates_list)):
+    exec_dt = exec_dt_obj.strftime('%Y-%m-%dT%H:%M:%S')
+    for dag_nm in dags_to_run:
         task_id = f"{dag_nm}_{exec_dt}"
         sanitized_task_id = re.sub(r"[^a-zA-Z0-9_-]", "-", task_id)
 
@@ -128,5 +145,8 @@ for dag_nm in dags_to_run:
                 },
                 dag=dag,
             )
+            if previous_task:
+                previous_task >> set_state  # Make it sequential
+            previous_task = set_state  # Update previous task
         else:
             clear_trigger_dag(dag_nm, exec_dt, sanitized_task_id)

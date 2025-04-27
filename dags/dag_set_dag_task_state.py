@@ -57,8 +57,9 @@ def manual_set_state(dag_id, task_id, execution_date_str, session: Session = Non
             print(f"Task exists: {dag_id}.{task_id} state set to SUCCESS for execution_date: {dag_run.execution_date}")
         else:
             ti = TaskInstance(task=target_task, execution_date=dag_run.execution_date)
-            ti.state = State.NONE
-            ti.state = desired_state
+            # ti.state = State.NONE
+            # ti.state = desired_state
+            ti.set_state(State.NONE, session=session)
             session.add(ti)
             print(f"Task didn't exists, added: {dag_id}.{task_id} and state set to SUCCESS for execution_date: {dag_run.execution_date}")
 
