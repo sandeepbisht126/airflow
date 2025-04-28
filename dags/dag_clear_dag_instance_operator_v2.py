@@ -77,16 +77,17 @@ def set_dag_state(dag_id, execution_date_str, session=None):
     print("All new tasks queued.")
 
 
-def clear_trigger_dag(dag_id, exec_date, sanitized_task, previous_task = None):
-
+def clear_trigger_dag(dag_id, exec_date, sanitized_task, priority_weight):
+    global previous_task
     # Step 1: delete existing DAG run
     clear_task = PythonOperator(
-        task_id=f"clear_{sanitized_task}",
+        task_id=f"delete_{sanitized_task}",
         python_callable=clear_dag_run,
         op_kwargs={
             'dag_id': dag_id,
             'execution_date_str': exec_date,
         },
+        priority_weight=priority_weight,
         dag=dag,
     )
 
@@ -97,6 +98,7 @@ def clear_trigger_dag(dag_id, exec_date, sanitized_task, previous_task = None):
             trigger_dag_id=dag_id,
             execution_date=exec_date,
             conf={},
+            priority_weight=priority_weight,
             dag=dag,
         )
         clear_task >> trigger_dag_run
@@ -104,8 +106,30 @@ def clear_trigger_dag(dag_id, exec_date, sanitized_task, previous_task = None):
         if dependency != "parallel":
             if previous_task:
                 previous_task >> clear_task
-                clear_task >> trigger_dag_run
                 previous_task = trigger_dag_run
+
+    return previous_task
+
+
+def run_new_tasks(dag_id, exec_date, sanitized_task, priority_weight):
+    global previous_task
+    set_state = PythonOperator(
+        task_id=f"run_new_tasks_{sanitized_task}",
+        python_callable=set_dag_state,
+        op_kwargs={
+            'dag_id':dag_id,
+            'execution_date_str': exec_date
+        },
+        priority_weight=priority_weight,
+        dag=dag,
+    )
+
+    if dependency != "parallel":
+        if previous_task:
+            previous_task >> set_state
+            previous_task = set_state
+
+    return previous_task
 
 
 dag = DAG(
@@ -124,29 +148,17 @@ if execution_date_start and execution_date_end:
         execution_dates_list.append(current_date)
         current_date += timedelta(days=1)
 
-
-# execution_dates_parsed = [parse_execution_date(dt) for dt in set(execution_dates_list)]
-# execution_dates_sorted = sorted(execution_dates_parsed)
-
 previous_task = []
-for exec_dt_obj in sorted(set(execution_dates_list)):
-    exec_dt = exec_dt_obj.strftime('%Y-%m-%dT%H:%M:%S')
+all_tasks = len(set(execution_dates_list))
+for i, exec_dt in enumerate(sorted(set(execution_dates_list))):
+    exec_dt = exec_dt.strftime('%Y-%m-%dT%H:%M:%S')
+    priority_wt = all_tasks - i
     for dag_nm in dags_to_run:
         task_id = f"{dag_nm}_{exec_dt}"
         sanitized_task_id = re.sub(r"[^a-zA-Z0-9_-]", "-", task_id)
 
         if only_run_new_tasks:
-            set_state = PythonOperator(
-                task_id=f"run_new_tasks_{sanitized_task_id}",
-                python_callable=set_dag_state,
-                op_kwargs={
-                    'dag_id': dag_nm,
-                    'execution_date_str': exec_dt,
-                },
-                dag=dag,
-            )
-            if previous_task:
-                previous_task >> set_state  # Make it sequential
-            previous_task = set_state  # Update previous task
+            previous_task = run_new_tasks(dag_nm, exec_dt, sanitized_task_id, priority_wt)
+
         else:
-            clear_trigger_dag(dag_nm, exec_dt, sanitized_task_id)
+            previous_task = clear_trigger_dag(dag_nm, exec_dt, sanitized_task_id, priority_wt)

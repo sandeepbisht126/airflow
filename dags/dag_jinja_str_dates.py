@@ -21,8 +21,8 @@ params = get_param_value(pipeline_name=pipeline_name,
 
 aod_delta = 4
 if params.get("load_type") == 'daily':
-    dates_to_process = [f"{{{{ macros.ds_add(ds, -{i}) }}}}" for i in range(4)]  # for multi-day processing for Daily load, like Beacon PDM
-    #dates_to_process = [f"{{{{ macros.ds_add(ds, -2) }}}}", f"{{{{ macros.ds_add(ds, -3) }}}}", f"{{{{ macros.ds_add(ds, -{aod_delta}) }}}}"]                         # for single day processing for Daily load, like Commercial common
+    dates_to_process = [f"{{{{ macros.ds_add(ds, -{i}) }}}}" for i in range(9)]  # for multi-day processing for Daily load, like Beacon PDM
+    #dates_to_process = [f"{{{{ macros.ds_add(ds, -{aod_delta}) }}}}"]           # for single day processing for Daily load, like Commercial common
 elif params.get("load_type") == 'historical':
     dates_to_process = [aod.strftime("%Y-%m-%d")
                         for aod, _ in daterange(convert_str_to_datetime(params.get("aod_start")),
