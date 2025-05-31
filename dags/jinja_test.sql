@@ -1,0 +1,2 @@
+INSERT INTO public.huge_table_parallel select * from public.huge_table where created_at = {aod}:: date limit 10
+--INSERT INTO public.huge_table_parallel select * from public.huge_table where created_at = '{{ macros.ds_add(ds, -1 ) }}':: date limit {{ params.limit }}
