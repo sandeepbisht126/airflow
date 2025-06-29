@@ -1,12 +1,13 @@
+from datetime import timedelta
+
 from airflow import DAG
-from jinja2 import Template
 from airflow.utils.dates import days_ago
 from custom_operator import PostgresInsertOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from step_custom_operator import PostgresStepInsertOperator
 
-aod = 2
-aod = f"{{{{ macros.ds_add(ds, -{aod})}}}}"
+delta = 2
+aod = f"{{{{ macros.ds_add(ds, -{delta})}}}}"
 
 with open("dags/jinja_test.sql", 'r') as file:
     source_query = file.read()
@@ -29,19 +30,21 @@ with DAG(
     custom_operator = PostgresInsertOperator(
         task_id="custom_operator",
         # source="public.huge_table",
-        source_query=source_query.format(aod=repr(aod)),
+        source_query=source_query.format(aod=repr(aod), cc=repr('IN')),
         # source_query= source_query,
         target="public.huge_table_parallel",
+        delete_by_key_val={"created_at": f"cast({repr(aod)} as date)"},
         key_cols=["id"],  # Not used for INSERT, but required by signature
         # custom_filter=f"where created_at = {repr(aod)}:: date limit 10",
-        postgres_conn_id="postgres_conn_id"
+        postgres_conn_id="postgres_conn_id",
+        execution_timeout=10
     )
 
     step_custom_operator = PostgresStepInsertOperator(
         task_id="step_custom_operator",
         steps=[{
             # source="public.huge_table",
-            'source_query': source_query.format(aod=repr(aod)),
+            'source_query': source_query.format(aod=repr(aod), cc=repr('SG')),
             # 'source_query': source_query,
             'target': "public.huge_table_parallel",
             'key_cols': ["id"],  # Not used for INSERT, but required by signature

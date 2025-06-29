@@ -10,13 +10,7 @@ from airflow.models import DagRun, DagBag
 from airflow.utils.state import State
 
 all_dag_params = Variable.get("dag_backfill_params", default_var="{}", deserialize_json=True)
-dags_to_run = all_dag_params.get("dags_to_run", [])
-execution_dates_list = all_dag_params.get("execution_dates_list", [])
-dependency = all_dag_params.get("dependency", "parallel")
-execution_date_start = all_dag_params.get("execution_date_start")
-execution_date_end = all_dag_params.get("execution_date_end")
-only_delete_dagrun = all_dag_params.get("only_delete_dagrun")
-only_run_new_tasks = all_dag_params.get("only_run_new_tasks", False)
+param_sets = all_dag_params if isinstance(all_dag_params, list) else [all_dag_params]
 
 
 @provide_session
@@ -132,33 +126,47 @@ def run_new_tasks(dag_id, exec_date, sanitized_task, priority_weight):
     return previous_task
 
 
+def parse_execution_dates():
+    """Get all execution dates from explicit list and/or start-end range."""
+    execution_dates_list = param_set.get("execution_dates_list", [])
+    execution_date_start = param_set.get("execution_date_start")
+    execution_date_end = param_set.get("execution_date_end")
+
+    if execution_date_start and execution_date_end:
+        start_date = parse_execution_date(execution_date_start)
+        end_date = parse_execution_date(execution_date_end)
+        current_date = start_date
+        while current_date <= end_date:
+            execution_dates_list.append(current_date)
+            current_date += timedelta(days=1)
+
+    return sorted(set([parse_execution_date(dt) if isinstance(dt, str) else dt for dt in execution_dates_list ]))
+
+
 dag = DAG(
     dag_id='dag_clear_dag_instance_operator_v2',
     schedule_interval=None,
     start_date=datetime(2025, 1, 1),
 )
 
-# Generate list of execution dates
-if execution_date_start and execution_date_end:
-    start_date = parse_execution_date(execution_date_start)
-    end_date = parse_execution_date(execution_date_end)
-    current_date = start_date
-    while current_date <= end_date:
-        # execution_dates_list.append(current_date.strftime('%Y-%m-%dT%H:%M:%S'))
-        execution_dates_list.append(current_date)
-        current_date += timedelta(days=1)
-
 previous_task = []
-all_tasks = len(set(execution_dates_list))
-for i, exec_dt in enumerate(sorted(set(execution_dates_list))):
-    exec_dt = exec_dt.strftime('%Y-%m-%dT%H:%M:%S')
-    priority_wt = all_tasks - i
-    for dag_nm in dags_to_run:
-        task_id = f"{dag_nm}_{exec_dt}"
-        sanitized_task_id = re.sub(r"[^a-zA-Z0-9_-]", "-", task_id)
+for param_set in param_sets:
+    dags_to_run = param_set.get("dags_to_run", [])
+    execution_dates = parse_execution_dates()
+    dependency = param_set.get("dependency", "parallel")
+    only_delete_dagrun = param_set.get("only_delete_dagrun")
+    only_run_new_tasks = param_set.get("only_run_new_tasks", False)
 
-        if only_run_new_tasks:
-            previous_task = run_new_tasks(dag_nm, exec_dt, sanitized_task_id, priority_wt)
+    all_tasks = len(set(execution_dates))
+    for idx, exec_dt in enumerate(execution_dates):
+        exec_dt = exec_dt.strftime('%Y-%m-%dT%H:%M:%S')
+        priority_wt = all_tasks - idx
+        for dag_nm in dags_to_run:
+            task_id = f"{dag_nm}_{exec_dt}"
+            sanitized_task_id = re.sub(r"[^a-zA-Z0-9_-]", "-", task_id)
 
-        else:
-            previous_task = clear_trigger_dag(dag_nm, exec_dt, sanitized_task_id, priority_wt)
+            if only_run_new_tasks:
+                previous_task = run_new_tasks(dag_nm, exec_dt, sanitized_task_id, priority_wt)
+
+            else:
+                previous_task = clear_trigger_dag(dag_nm, exec_dt, sanitized_task_id, priority_wt)
