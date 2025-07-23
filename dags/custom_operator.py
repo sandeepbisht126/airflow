@@ -1,5 +1,3 @@
-import time
-from datetime import timedelta
 from airflow.models import BaseOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
@@ -8,7 +6,7 @@ from airflow.operators.python import PythonOperator
 
 
 class PostgresInsertOperator(BaseOperator):
-    template_fields = ["_source_query", "_filter_clause"]
+    template_fields = ["_source_query", "_filter_clause", "_parameters"]
 
     @apply_defaults
     def __init__(
@@ -20,7 +18,7 @@ class PostgresInsertOperator(BaseOperator):
         custom_filter: str = None,
         operation_type: str = "INSERT",
         delete_by_key_val: dict = None,
-        params: dict = None,
+        parameters: dict = None,
         postgres_conn_id: str = "postgres_conn_id",
         # execution_timeout: int = None,
         **kwargs,
@@ -31,7 +29,7 @@ class PostgresInsertOperator(BaseOperator):
         self.target = target
         self.key_cols = key_cols or []
         self._custom_filter = custom_filter
-        self._params = params
+        self._parameters = parameters
         self.operation_type = operation_type.upper()
         self.postgres_conn_id = postgres_conn_id
         self._delete_by_key_val = delete_by_key_val
@@ -97,12 +95,6 @@ class PostgresInsertOperator(BaseOperator):
                 INSERT INTO {self.target} ({col_list})
                 SELECT {col_list} FROM {self.source} {self._filter_clause}
         """
-
-        # insert_sql = f"""
-        #     INSERT INTO {self.target}
-        #     SELECT * FROM {self.source}
-        # """
-
         self.log.info(f"Running INSERT SQL:\n{insert_sql}")
 
         # op = PostgresOperator(
@@ -113,10 +105,10 @@ class PostgresInsertOperator(BaseOperator):
         # )
         # return op.execute(context)
 
-        time.sleep(10)
-
-        rows_affected = pg_hook.run(sql=insert_sql, parameters=self._params, autocommit=True)
+        rows_affected = pg_hook.run(sql=insert_sql, parameters=self._parameters, autocommit=True)
         self.log.info(f"INSERT operation to {self.target} completed successfully. Rows affected: {rows_affected}")
+
+        self.log.info(f"parameters value: {self._parameters}")
 
         return rows_affected
 

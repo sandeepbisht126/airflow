@@ -37,7 +37,9 @@ with DAG(
         key_cols=["id"],  # Not used for INSERT, but required by signature
         # custom_filter=f"where created_at = {repr(aod)}:: date limit 10",
         postgres_conn_id="postgres_conn_id",
-        execution_timeout=10
+        execution_timeout=timedelta(seconds=50),
+        parameters={"aod": aod,
+                    "country_code": 'cc'}
     )
 
     step_custom_operator = PostgresStepInsertOperator(
